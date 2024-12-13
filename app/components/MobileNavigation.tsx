@@ -15,9 +15,11 @@ interface props {
 	fullName: string;
 	avatar: string;
 	email: string;
+	$id: string;
+	accountId: string;
 }
 
-const MobileNavigation = ({ fullName, avatar, email }: props) => {
+const MobileNavigation = ({ fullName, avatar, email, $id: ownerId, accountId }: props) => {
 	const [open, setOpen] = useState(false);
 	const pathname = usePathname();
 	return (
@@ -52,12 +54,18 @@ const MobileNavigation = ({ fullName, avatar, email }: props) => {
 					</nav>
 					<Separator className="my-5 bg-light-200/20" />
 					<div className="flex flex-col justify-between gap-5">
-            <FileUploader/>
-          <Button type='submit' className='mobile-sign-out-button' onClick={async()=>{ await signOutUser()}}>
-            <Image src='/assets/icons/logout.svg' alt='logout-logo' height={24} width={24}/>
-            <p>Logout</p>
-          </Button>
-          </div>
+						<FileUploader ownerId={ownerId} accountId={accountId} />
+						<Button
+							type="submit"
+							className="mobile-sign-out-button"
+							onClick={async () => {
+								await signOutUser();
+							}}
+						>
+							<Image src="/assets/icons/logout.svg" alt="logout-logo" height={24} width={24} />
+							<p>Logout</p>
+						</Button>
+					</div>
 				</SheetContent>
 			</Sheet>
 		</header>
