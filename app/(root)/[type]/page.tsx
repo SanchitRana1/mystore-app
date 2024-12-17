@@ -1,13 +1,17 @@
 import Card from '@/app/components/Card';
 import Sort from '@/app/components/Sort';
 import { getFiles } from '@/lib/actions/file.actions';
-import { SearchParamProps } from '@/types';
+import { getFileTypesParams } from '@/lib/utils';
+import { FileType, SearchParamProps } from '@/types';
 import { Models } from 'node-appwrite';
 import React from 'react';
 
-const Page = async ({ params }: SearchParamProps) => {
+const Page = async ({ searchParams, params }: SearchParamProps) => {
 	const type = ((await params)?.type as string) || '';
-	const files = await getFiles();
+	const types = getFileTypesParams(type) as FileType[];
+	const searchText = ((await searchParams)?.query as string) || '';
+	const sort = ((await searchParams)?.sort as string) || '';
+	const files = await getFiles({ types, searchText, sort });
 	return (
 		<div className="page-container">
 			<section className="w-full">
@@ -23,13 +27,12 @@ const Page = async ({ params }: SearchParamProps) => {
 				</div>
 			</section>
 			{/* render the files */}
+			{/* {console.log(type)} */}
 			{files.total > 0 ? (
 				<section className="file-list">
-					{files.documents
-						.filter((file: Models.Document) => type.includes(file.type))
-						.map((file: Models.Document) => (
-							<Card key={file.$id} file={file} />
-						))}
+					{files.documents.map((file: Models.Document) => (
+						<Card key={file.$id} file={file} />
+					))}
 				</section>
 			) : (
 				<p className="empty-list">{`No files uploaded '\\_(ツ)_/' `}</p>
